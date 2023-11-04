@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     public bool isMoving;
     private Vector2 input;
 
+    [SerializeField] private PlayerAnimator animator;
+
     // Update is called once per frame
     private void Update()
     {
@@ -20,7 +22,9 @@ public class PlayerController : MonoBehaviour
 
         if (input != Vector2.zero)
         {
-            Vector3 targetPos = new Vector3(
+            if (input.x != 0) input.y = 0;
+
+            Vector2 targetPos = new Vector2(
                 transform.position.x + input.x,
                 transform.position.y + input.y
             );
@@ -29,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
             input = Vector2.zero;
             GameManager.Instance.IncrementTurn();
+            animator.OnMove(targetPos - new Vector2(transform.position.x, transform.position.y));
         }
 
         
@@ -47,5 +52,6 @@ public class PlayerController : MonoBehaviour
         transform.position = target;
 
         isMoving = false;
+        animator.OnMove(Vector2.zero);
     }
 }
