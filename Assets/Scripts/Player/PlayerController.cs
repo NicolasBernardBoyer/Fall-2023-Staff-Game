@@ -18,6 +18,9 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        PollPause();
+        if (GameManager.Instance.isPaused) return;
+
         if (!isMoving)
         {
             input.x = Input.GetAxisRaw("Horizontal");
@@ -44,6 +47,17 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(Move(targetPos));
             GameManager.Instance.IncrementTurn();
         }  
+    }
+
+    private void PollPause()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (GameManager.Instance.isPaused)
+            {
+                UIManager.Instance.Resume();
+            } else GameManager.Instance.Pause();
+        }
     }
 
     private IEnumerator Move(Vector3 target)

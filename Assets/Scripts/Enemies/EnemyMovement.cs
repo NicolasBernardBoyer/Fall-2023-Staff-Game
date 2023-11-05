@@ -19,6 +19,8 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float rayLength = 1.2f;
     [SerializeField] private int playerSightRange = 3;
 
+    private Vector3 prevTile;
+
     private void Awake()
     {
         availableDirections = new List<Direction> {
@@ -54,17 +56,27 @@ public class EnemyMovement : MonoBehaviour
                 targetPos = transform.position + Vector3.down;
                 break;
             case Direction.Right:
+                transform.localScale = new Vector3(1, 1, 1);
                 targetPos = transform.position + Vector3.right;
                 break;
             case Direction.Left:
+                transform.localScale = new Vector3(-1, 1, 1);
                 targetPos = transform.position + Vector3.left;
                 break;
         }
 
+        prevTile = transform.position;
+
         StartCoroutine(Move(targetPos));
     }
 
-    IEnumerator Move(Vector3 target)
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        StopAllCoroutines();
+        StartCoroutine(Move(prevTile));
+    }
+
+    private IEnumerator Move(Vector3 target)
     {
         isMoving = true;
 
