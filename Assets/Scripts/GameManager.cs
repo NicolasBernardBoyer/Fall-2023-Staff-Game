@@ -34,4 +34,9 @@ public class GameManager
         onTurn?.Invoke(turn);
         Debug.Log("Turn: " + turn);
     }
+
+    public void GameOver()
+    {
+        Debug.Log("GAME OVER");
+    }
 }

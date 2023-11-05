@@ -6,10 +6,14 @@ public class PlayerController : MonoBehaviour
 {
     public float movementSpeed = 3;
 
-    public bool isMoving;
+    [HideInInspector] public bool isMoving;
     private Vector2 input;
 
     [SerializeField] private PlayerAnimator animator;
+
+    [SerializeField] private float rayLength = 1.2f;
+
+    public LayerMask layer;
 
     // Update is called once per frame
     private void Update()
@@ -29,17 +33,20 @@ public class PlayerController : MonoBehaviour
                 transform.position.y + input.y
             );
 
-            StartCoroutine(Move(targetPos));
+            Vector2 moveDirection = targetPos - new Vector2(transform.position.x, transform.position.y);
 
+            animator.OnMove(moveDirection);
             input = Vector2.zero;
-            GameManager.Instance.IncrementTurn();
-            animator.OnMove(targetPos - new Vector2(transform.position.x, transform.position.y));
-        }
 
-        
+            if (CollisionCheck(moveDirection)) return;
+
+            // On success
+            StartCoroutine(Move(targetPos));
+            GameManager.Instance.IncrementTurn();
+        }  
     }
 
-    IEnumerator Move(Vector3 target)
+    private IEnumerator Move(Vector3 target)
     {
         isMoving = true;
 
@@ -53,5 +60,20 @@ public class PlayerController : MonoBehaviour
 
         isMoving = false;
         animator.OnMove(Vector2.zero);
+    }
+
+    private bool CollisionCheck(Vector2 direction)
+    {
+        Vector3 ortho = Vector3.Cross(direction, Vector3.forward).normalized;
+
+        RaycastHit2D hit1 = Physics2D.Raycast(transform.position, direction.normalized, rayLength, layer);
+        RaycastHit2D hit2 = Physics2D.Raycast(transform.position + 0.4f * ortho, direction.normalized, rayLength, layer);
+        RaycastHit2D hit3 = Physics2D.Raycast(transform.position - 0.4f * ortho, direction.normalized, rayLength, layer);
+        return hit1.collider != null || hit2.collider != null || hit3.collider != null;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        GameManager.Instance.GameOver();
     }
 }
