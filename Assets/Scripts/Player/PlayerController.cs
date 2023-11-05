@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,7 +14,17 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float rayLength = 1.2f;
 
-    public LayerMask layer;
+    public LayerMask wallLayer;
+    public LayerMask enemyLayer;
+    public LayerMask portalLayer;
+
+    [SerializeField] private Color alternateLightColor;
+    private Light2D spotLight;
+
+    private void Awake()
+    {
+        spotLight = GetComponentInChildren<Light2D>();
+    }
 
     // Update is called once per frame
     private void Update()
@@ -80,14 +91,24 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 ortho = Vector3.Cross(direction, Vector3.forward).normalized;
 
-        RaycastHit2D hit1 = Physics2D.Raycast(transform.position, direction.normalized, rayLength, layer);
-        RaycastHit2D hit2 = Physics2D.Raycast(transform.position + 0.4f * ortho, direction.normalized, rayLength, layer);
-        RaycastHit2D hit3 = Physics2D.Raycast(transform.position - 0.4f * ortho, direction.normalized, rayLength, layer);
+        RaycastHit2D hit1 = Physics2D.Raycast(
+            transform.position, direction.normalized, rayLength, wallLayer);
+        RaycastHit2D hit2 = Physics2D.Raycast(
+            transform.position + 0.4f * ortho, direction.normalized, rayLength, wallLayer);
+        RaycastHit2D hit3 = Physics2D.Raycast(
+            transform.position - 0.4f * ortho, direction.normalized, rayLength, wallLayer);
         return hit1.collider != null || hit2.collider != null || hit3.collider != null;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        GameManager.Instance.GameOver();
+        if (collision.gameObject.layer == enemyLayer) GameManager.Instance.GameOver();
+
+        if (collision.gameObject.layer == portalLayer)
+        {
+            GameManager.Instance.ChangeDimension();
+            if (spotLight.color != Color.white) spotLight.color = Color.white;
+            else spotLight.color = alternateLightColor;
+        }
     }
 }

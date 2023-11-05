@@ -16,9 +16,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float fadeTime = 1.0f;
     [SerializeField] private float gameOverTextTime = 2.0f;
 
-    [SerializeField] private CanvasGroup pauseGroup;
-    [SerializeField] private CanvasGroup gameOverTextGroup;
-    [SerializeField] private CanvasGroup gameOverButtonGroup;
+    private CanvasGroup pauseGroup;
+    private CanvasGroup gameOverTextGroup;
+    private CanvasGroup gameOverButtonGroup;
 
     private Action onFadeEnd;
 

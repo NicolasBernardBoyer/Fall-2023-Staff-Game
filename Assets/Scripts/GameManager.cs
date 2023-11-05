@@ -76,6 +76,11 @@ public class GameManager
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void ChangeDimension()
+    {
+        DimensionManager.Instance.SwitchDimension();
+    }
+
     public void LoadMenu()
     {
         gameHasEnded = false;

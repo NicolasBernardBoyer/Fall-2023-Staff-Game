@@ -30,9 +30,22 @@ public class EnemyMovement : MonoBehaviour
         GameManager.onTurn += (int a) => MoveEnemy();
     }
 
+    private void Start()
+    {
+        if (gameObject.tag == "Base")
+        {
+            DimensionManager.Instance.baseDimEnemies.Add(gameObject);
+            gameObject.SetActive(true);
+        } else
+        {
+            DimensionManager.Instance.alternateDimEnemies.Add(gameObject);
+            gameObject.SetActive(false);
+        }
+    }
+
     private void MoveEnemy()
     {
-        if (isMoving) return;
+        if (isMoving || !gameObject.activeSelf) return;
 
         SetupAvailableDirections();
         Vector3 targetPos = Vector3.zero;
