@@ -15,6 +15,7 @@ public class EnemyMovement : MonoBehaviour
 
     public LayerMask wallLayer;
     public LayerMask playerLayer;
+    public LayerMask enemyLayer;
     [SerializeField] private float rayLength = 1.2f;
     [SerializeField] private int playerSightRange = 3;
 
@@ -116,7 +117,7 @@ public class EnemyMovement : MonoBehaviour
         RaycastHit2D hit1 = Physics2D.Raycast(
             transform.position, direction.normalized, rayLength, wallLayer);
         RaycastHit2D hit2 = Physics2D.Raycast(
-            transform.position + 0.4f * ortho, direction.normalized, rayLength, wallLayer);
+            transform.position + 0.4f * ortho, direction.normalized, rayLength, enemyLayer);
         RaycastHit2D hit3 = Physics2D.Raycast(
             transform.position - 0.4f * ortho, direction.normalized, rayLength, wallLayer);
 
