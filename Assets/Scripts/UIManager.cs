@@ -9,12 +9,19 @@ public class UIManager : MonoBehaviour
     private static UIManager instance = new UIManager(); // Singleton pattern
 
     [SerializeField] private GameObject pauseUI;
-    [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private GameObject gameOverTextUI;
+    [SerializeField] private GameObject gameOverButtonUI;
+
 
     [SerializeField] private float fadeTime = 1.0f;
+    [SerializeField] private float gameOverTextTime = 2.0f;
 
     [SerializeField] private CanvasGroup pauseGroup;
-    [SerializeField] private CanvasGroup gameOverGroup;
+    [SerializeField] private CanvasGroup gameOverTextGroup;
+    [SerializeField] private CanvasGroup gameOverButtonGroup;
+
+    private Action onFadeEnd;
+
 
     private void Awake()
     {
@@ -22,10 +29,12 @@ public class UIManager : MonoBehaviour
         {
             instance = this;
             pauseGroup = pauseUI.GetComponent<CanvasGroup>();
-            gameOverGroup = gameOverUI.GetComponent<CanvasGroup>();
+            gameOverTextGroup = gameOverTextUI.GetComponent<CanvasGroup>();
+            gameOverButtonGroup = gameOverButtonUI.GetComponent<CanvasGroup>();
 
             pauseUI.SetActive(false);
-            gameOverUI.SetActive(false);
+            gameOverTextUI.SetActive(false);
+            gameOverButtonUI.SetActive(false);
         }
         else
         {
@@ -60,16 +69,23 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("GAME OVER UI");
 
-        gameOverGroup.alpha = 0.0f;
-        gameOverUI.SetActive(true);
+        gameOverTextGroup.alpha = 0.0f;
+        gameOverTextUI.SetActive(true);
 
-        StartCoroutine(FadeUI(gameOverGroup, fadeTime, 0.0f, 1.0f));
+        onFadeEnd += GameOverButtons;
+        StartCoroutine(FadeUI(gameOverTextGroup, fadeTime, 0.0f, 1.0f));
+    }
+
+    private void GameOverButtons()
+    {
+        StartCoroutine(DelayButtons());
     }
 
     public void Resume()
     {
         StopAllCoroutines();
         GameManager.Instance.Resume();
+        pauseUI.SetActive(false);
         StartCoroutine(FadeUI(pauseGroup, fadeTime, pauseGroup.alpha, 0.0f));
     }
 
@@ -81,6 +97,22 @@ public class UIManager : MonoBehaviour
     public void ExitToMenu()
     {
         GameManager.Instance.LoadMenu();
+    }
+
+    private IEnumerator DelayButtons()
+    {
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < gameOverTextTime)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        StartCoroutine(FadeUI(gameOverTextGroup, fadeTime, 1.0f, 0.0f));
+        onFadeEnd = null;
+        gameOverButtonUI.SetActive(true);
+        StartCoroutine(FadeUI(gameOverButtonGroup, fadeTime, 0.0f, 1.0f));
     }
 
     private IEnumerator FadeUI(CanvasGroup group, float fadeTime, float initialAlpha, float finalAlpha)
@@ -102,5 +134,7 @@ public class UIManager : MonoBehaviour
 
             yield return null;
         }
+
+        onFadeEnd?.Invoke();
     }
 }

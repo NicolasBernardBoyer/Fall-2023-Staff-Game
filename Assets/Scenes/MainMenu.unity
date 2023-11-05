@@ -639,8 +639,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: NICK IS SO SAD
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8e112213f8060449e839566421bb3632, type: 2}
+  m_sharedMaterial: {fileID: 4274102058191218704, guid: 8e112213f8060449e839566421bb3632, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1112,5 +1112,9 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1526026333}
+    - target: {fileID: 4540378326772269601, guid: a7ea0c721c85f4e6989a88f7c81adbdb, type: 3}
+      propertyPath: m_text
+      value: PLAY
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a7ea0c721c85f4e6989a88f7c81adbdb, type: 3}
