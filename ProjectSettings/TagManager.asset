@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Base
+  - Alternate
   layers:
   - Default
   - TransparentFX
@@ -46,6 +48,12 @@ TagManager:
     locked: 0
   - name: Walls
     uniqueID: 945727709
+    locked: 0
+  - name: Decorations
+    uniqueID: 3795347603
+    locked: 0
+  - name: Portals
+    uniqueID: 3543762143
     locked: 0
   - name: Player
     uniqueID: 974428401
