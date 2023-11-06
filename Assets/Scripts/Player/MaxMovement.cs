@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
-public class EnemyMovement : MonoBehaviour
+public class MaxMovement : MonoBehaviour
 {
-    [SerializeField] private float movementSpeed;
+    [SerializeField] private float movementSpeed= 4.0f;
 
     private enum Direction { Down, Right, Left, Up, None }
     private bool isMoving = false;
@@ -16,7 +16,7 @@ public class EnemyMovement : MonoBehaviour
     public LayerMask playerLayer;
     public LayerMask enemyLayer;
     [SerializeField] private float rayLength = 1.2f;
-    [SerializeField] private int playerSightRange = 3;
+    [SerializeField] private int playerSightRange = 5;
 
     private Vector3 prevTile;
 
@@ -26,7 +26,7 @@ public class EnemyMovement : MonoBehaviour
             Direction.Up, Direction.Down, Direction.Right, Direction.Left
         };
 
-        GameManager.onTurn += (int a) => MoveEnemy();
+        GameManager.onTurn += (int a) => MoveMax();
     }
 
     private void Start()
@@ -35,14 +35,15 @@ public class EnemyMovement : MonoBehaviour
         {
             DimensionManager.Instance.baseDimEnemies.Add(gameObject);
             gameObject.SetActive(true);
-        } else
+        }
+        else
         {
             DimensionManager.Instance.alternateDimEnemies.Add(gameObject);
             gameObject.SetActive(false);
         }
     }
 
-    private void MoveEnemy()
+    private void MoveMax()
     {
         if (isMoving || !gameObject.activeSelf) return;
 
@@ -55,6 +56,31 @@ public class EnemyMovement : MonoBehaviour
 
         if (!directionIsAvailable || direction == Direction.None)
         {
+            if (availableDirections.Count > 1)
+            {
+                switch (direction)
+                {
+                    case Direction.Up:
+                        if (availableDirections.Contains(Direction.Down))
+                            availableDirections.Remove(Direction.Down);
+                        break;
+                    case Direction.Down:
+                        if (availableDirections.Contains(Direction.Up))
+                            availableDirections.Remove(Direction.Up);
+                        break;
+                    case Direction.Right:
+                        transform.localScale = new Vector3(-1, 1, 1);
+                        if (availableDirections.Contains(Direction.Left))
+                            availableDirections.Remove(Direction.Left);
+                        break;
+                    case Direction.Left:
+                        transform.localScale = new Vector3(1, 1, 1);
+                        if (availableDirections.Contains(Direction.Right))
+                            availableDirections.Remove(Direction.Right);
+                        break;
+                }
+            }
+
             int randomIndex = (int)Random.Range(0.0f, availableDirections.Count);
             direction = availableDirections[randomIndex];
         }
@@ -68,11 +94,11 @@ public class EnemyMovement : MonoBehaviour
                 targetPos = transform.position + Vector3.down;
                 break;
             case Direction.Right:
-                transform.localScale = new Vector3(1, 1, 1);
+                transform.localScale = new Vector3(-1, 1, 1);
                 targetPos = transform.position + Vector3.right;
                 break;
             case Direction.Left:
-                transform.localScale = new Vector3(-1, 1, 1);
+                transform.localScale = new Vector3(1, 1, 1);
                 targetPos = transform.position + Vector3.left;
                 break;
         }
@@ -80,12 +106,6 @@ public class EnemyMovement : MonoBehaviour
         prevTile = transform.position;
 
         StartCoroutine(Move(targetPos));
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        StopAllCoroutines();
-        StartCoroutine(Move(prevTile));
     }
 
     private IEnumerator Move(Vector3 target)
@@ -107,19 +127,19 @@ public class EnemyMovement : MonoBehaviour
     {
         RaycastHit2D hitUp = Physics2D.Raycast(
             transform.position, Vector2.up, playerSightRange, playerLayer);
-        if (hitUp.collider != null) return Direction.Up;
+        if (hitUp.collider != null) return Direction.Down;
 
         RaycastHit2D hitDown = Physics2D.Raycast(
             transform.position, Vector2.down, playerSightRange, playerLayer);
-        if (hitDown.collider != null) return Direction.Down;
+        if (hitDown.collider != null) return Direction.Up;
 
         RaycastHit2D hitRight = Physics2D.Raycast(
             transform.position, Vector2.right, playerSightRange, playerLayer);
-        if (hitRight.collider != null) return Direction.Right;
+        if (hitRight.collider != null) return Direction.Left;
 
         RaycastHit2D hitLeft = Physics2D.Raycast(
             transform.position, Vector2.left, playerSightRange, playerLayer);
-        if (hitLeft.collider != null) return Direction.Left;
+        if (hitLeft.collider != null) return Direction.Right;
 
         return Direction.None;
     }

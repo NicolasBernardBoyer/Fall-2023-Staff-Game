@@ -12,7 +12,7 @@ public class DimensionManager : MonoBehaviour
     public List<GameObject> baseDimEnemies;
     public List<GameObject> alternateDimEnemies;
 
-    private bool alternateDimension = false;
+    [SerializeField] private bool isAlternate = false;
 
     private void Awake()
     {
@@ -46,8 +46,8 @@ public class DimensionManager : MonoBehaviour
     }
 
     public void SwitchDimension()
-    {
-        if (alternateDim)
+    { 
+        if (isAlternate)
         {
             baseDim.SetActive(true);
             alternateDim.SetActive(false);
@@ -62,6 +62,7 @@ public class DimensionManager : MonoBehaviour
             ToggleGOList(baseDimEnemies, false);
             ToggleGOList(alternateDimEnemies, true);
         }
+        isAlternate = !isAlternate;
     }
 
     private void ToggleGOList(List<GameObject> list, bool enable)

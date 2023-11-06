@@ -12,15 +12,15 @@ public class FitToTile : MonoBehaviour
 
         float dx, dy;
 
-        float xDecimal = pos.x - (int) pos.x;
-        float yDecimal = pos.y - (int) pos.y;
+        float xDecimal = (int) pos.x;
+        float yDecimal = (int) pos.y;
 
-        dx = -(xDecimal - 0.5f);
-        dy = -(yDecimal - 0.5f);
+        dx = xDecimal > 0 ? xDecimal + 0.5f : xDecimal - 0.5f;
+        dy = yDecimal > 0 ? yDecimal + 0.5f : yDecimal - 0.5f;
 
         transform.position = new Vector3(
-            transform.position.x + dx,
-            transform.position.y + dy,
+            dx,
+            dy,
             0
         );
     }

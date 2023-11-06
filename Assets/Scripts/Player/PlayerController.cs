@@ -14,9 +14,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float rayLength = 1.2f;
 
-    public LayerMask wallLayer;
-    public LayerMask enemyLayer;
-    public LayerMask portalLayer;
+    [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private LayerMask portalLayer;
 
     [SerializeField] private Color alternateLightColor;
     private Light2D spotLight;
@@ -102,13 +102,21 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.layer == enemyLayer) GameManager.Instance.GameOver();
+        if (collision.gameObject.layer == 3)
+        {
+            GameManager.Instance.GameOver();
+        }
 
-        if (collision.gameObject.layer == portalLayer)
+        if (collision.gameObject.layer == 9)
         {
             GameManager.Instance.ChangeDimension();
             if (spotLight.color != Color.white) spotLight.color = Color.white;
             else spotLight.color = alternateLightColor;
+        }
+
+        if (collision.gameObject.layer == 10)
+        {
+            GameManager.Instance.Win();
         }
     }
 }

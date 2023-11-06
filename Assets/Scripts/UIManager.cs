@@ -11,6 +11,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject pauseUI;
     [SerializeField] private GameObject gameOverTextUI;
     [SerializeField] private GameObject gameOverButtonUI;
+    [SerializeField] private GameObject winTextUI;
+    [SerializeField] private GameObject winButtonUI;
+
+    [SerializeField] private AudioSource win;
+    [SerializeField] private AudioSource lose;
+    [SerializeField] private AudioSource backMusic;
 
 
     [SerializeField] private float fadeTime = 1.0f;
@@ -19,6 +25,8 @@ public class UIManager : MonoBehaviour
     private CanvasGroup pauseGroup;
     private CanvasGroup gameOverTextGroup;
     private CanvasGroup gameOverButtonGroup;
+    private CanvasGroup winTextGroup;
+    private CanvasGroup winButtonGroup;
 
     private Action onFadeEnd;
 
@@ -31,10 +39,14 @@ public class UIManager : MonoBehaviour
             pauseGroup = pauseUI.GetComponent<CanvasGroup>();
             gameOverTextGroup = gameOverTextUI.GetComponent<CanvasGroup>();
             gameOverButtonGroup = gameOverButtonUI.GetComponent<CanvasGroup>();
+            winTextGroup = winTextUI.GetComponent<CanvasGroup>();
+            winButtonGroup = winButtonUI.GetComponent<CanvasGroup>();
 
             pauseUI.SetActive(false);
             gameOverTextUI.SetActive(false);
             gameOverButtonUI.SetActive(false);
+            winTextUI.SetActive(false);
+            winButtonUI.SetActive(false);
         }
         else
         {
@@ -69,11 +81,30 @@ public class UIManager : MonoBehaviour
     {
         Debug.Log("GAME OVER UI");
 
+        lose.Play();
+        backMusic.Stop();
+
         gameOverTextGroup.alpha = 0.0f;
         gameOverTextUI.SetActive(true);
 
         onFadeEnd += GameOverButtons;
         StartCoroutine(FadeUI(gameOverTextGroup, fadeTime, 0.0f, 1.0f));
+    }
+
+    public void Win()
+    {
+        winTextGroup.alpha = 0.0f;
+        winTextUI.SetActive(true);
+
+        win.Play();
+
+        onFadeEnd += WinButtons;
+        StartCoroutine(FadeUI(winTextGroup, fadeTime, 0.0f, 1.0f));
+    }
+
+    private void WinButtons()
+    {
+        StartCoroutine(DelayWin());
     }
 
     private void GameOverButtons()
@@ -113,6 +144,22 @@ public class UIManager : MonoBehaviour
         onFadeEnd = null;
         gameOverButtonUI.SetActive(true);
         StartCoroutine(FadeUI(gameOverButtonGroup, fadeTime, 0.0f, 1.0f));
+    }
+
+    private IEnumerator DelayWin()
+    {
+        float elapsedTime = 0.0f;
+
+        while (elapsedTime < gameOverTextTime)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        StartCoroutine(FadeUI(winTextGroup, fadeTime, 1.0f, 0.0f));
+        onFadeEnd = null;
+        winButtonUI.SetActive(true);
+        StartCoroutine(FadeUI(winButtonGroup, fadeTime, 0.0f, 1.0f));
     }
 
     private IEnumerator FadeUI(CanvasGroup group, float fadeTime, float initialAlpha, float finalAlpha)

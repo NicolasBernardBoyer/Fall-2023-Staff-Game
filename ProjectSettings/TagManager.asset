@@ -16,8 +16,8 @@ TagManager:
   - Wall
   - Player
   - Portal
-  - 
-  - 
+  - PortalV2
+  - Max
   - 
   - 
   - 
@@ -49,11 +49,14 @@ TagManager:
   - name: Walls
     uniqueID: 945727709
     locked: 0
+  - name: Portals
+    uniqueID: 3543762143
+    locked: 0
   - name: Decorations
     uniqueID: 3795347603
     locked: 0
-  - name: Portals
-    uniqueID: 3543762143
+  - name: P
+    uniqueID: 3690642107
     locked: 0
   - name: Player
     uniqueID: 974428401

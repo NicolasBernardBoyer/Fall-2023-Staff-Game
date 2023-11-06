@@ -89,4 +89,16 @@ public class GameManager
         Resume();
         SceneManager.LoadScene(0);
     }
+
+    public void Win()
+    {
+        if (gameHasEnded == false)
+        {
+            PauseMovement();
+            gameHasEnded = true;
+            Debug.Log("Win");
+            UIManager.Instance.Win();
+        }
+
+    }
 }
